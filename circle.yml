@@ -1,10 +1,13 @@
+machine:
+  environment:
+   LD_LIBRARY_PATH: /home/ubuntu/Elara/Elara:$LD_LIBRARY_PATH 
 dependencies:
   override:
     - sudo apt-get update
-    - sudo apt-get install clang
+    - sudo apt-get install clang libblocksruntime-dev
 
 test:
   override:
     - make
     - make -f Makefile.test
-    - ./ElaraSpec
+    - make -f Makefile.test spec
