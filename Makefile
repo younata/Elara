@@ -1,7 +1,7 @@
 CC=clang
 
 C_SRC=$(wildcard Source/*.c)
-CFLAGS=-fblocks -IInclude
+CFLAGS=-Wall -Werror -fblocks -fPIC -IInclude
 
 SHAREDLIB=libelara.so
 
