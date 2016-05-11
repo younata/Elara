@@ -8,6 +8,4 @@ dependencies:
 
 test:
   override:
-    - make
-    - make -f Makefile.test
-    - make -f Makefile.test spec
+    - make spec
