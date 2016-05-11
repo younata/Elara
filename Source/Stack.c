@@ -1,4 +1,5 @@
 #include "Stack.h"
+#include <stdlib.h>
 
 ElaraStack *elara_stack_create() {
     ElaraStack *stack = malloc(sizeof(ElaraStack));
@@ -13,7 +14,7 @@ void elara_stack_insert(ElaraStack *stack, void *entry) {
 }
 
 int elara_stack_count(ElaraStack *stack) {
-    int count = 0;
+    __block int count = 0;
     elara_stack_foreach(stack, ^(void *entry) {
         count += 1;
     });

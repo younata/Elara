@@ -5,7 +5,7 @@
 
 typedef void (^ElaraStackEntryBlock)(void *);
 
-SLIST_HEAD(Elara_Stack_Head, Elara_Stack_entry);
+SLIST_HEAD(Elara_Stack_Head, Elara_Stack_Entry);
 typedef struct Elara_Stack_Head ElaraStack;
 
 struct Elara_Stack_Entry {

@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "TestContext.h"
 
 TestContext *testContext_create(TestContext *parent_context) {
@@ -8,11 +10,12 @@ TestContext *testContext_create(TestContext *parent_context) {
         elara_stack_insert(parent_context->children, context);
     }
 
-    return context
+    return context;
 }
 
 void testContext_dealloc(TestContext *context) {
-    elara_stack_dealloc(context->children, ^(TestContext *subcontext){
+    elara_stack_dealloc(context->children, ^(void *entry) {
+        TestContext *subcontext = (TestContext *)entry;
         testContext_dealloc(subcontext);
     });
     free(context);

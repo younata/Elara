@@ -1,46 +1,51 @@
-#include "Elara.h"
 #include <sys/queue.h>
+#include <stdio.h>
 
-TestContext baseContext;
-TestContext *currentContext;
+#include "Elara.h"
+#include "TestContext.h"
+
+TestContext *baseContext = NULL;
+TestContext *currentContext = NULL;
 
 void elara_tests(ElaraTestBlock tests) {
-    currentContext = &baseContext;
+    if (baseContext == NULL) {
+        baseContext = testContext_create(NULL);
+    }
+    currentContext = baseContext;
 }
 
-void describe(const char *name, ElaraTestBlock context) {
-    TestContext *innerContext = calloc(1, sizeof(TestContext));
+void describe(const char *name, ElaraTestBlock block) {
+    TestContext *context = testContext_create(currentContext);
+    context->name = (char *)name;
+    context->block = block;
 }
 
 void it(const char *name, ElaraTestBlock test) {
-    TestContext itContext;
+    TestContext *itContext = testContext_create(currentContext);
 
-    itContext.name = name;
-    itContext.block = test;
-    itContext.status = TestStatusNotRun;
-
-    context_addSubcontext(currentContext, itContext);
+    itContext->name = (char *)name;
+    itContext->block = test;
+    itContext->status = TestStatusNotRun;
 }
 
 void expect(int condition) {
     if (condition) {
+        currentContext->status = TestStatusSucceeded;
     } else {
+        currentContext->status = TestStatusFailed;
     }
 }
 
-void context_addSubcontext(TestContext *context, TestContext subcontext) {
-    if (context->children == NULL) {
-        context->children = calloc(1, sizeof(TestContext));
-    } else if (sizeof(context->children) / sizeof(TestContext) == context->childrenCount) {
-        int size = sizeof(TestContext) * context->childrenCount * 2;
-        context->children = realloc(context->children, size);
+void run(TestContext *context) {
+    TestContext *oldContext = currentContext;
+    if (context->block != NULL) {
+        currentContext = context;
+        context->block();
+        elara_stack_foreach(context->children, ^(void *entry){
+            TestContext *childContext = (TestContext *)entry;
+            run(childContext);
+        });
+        currentContext = oldContext;
     }
-
-    context->children[context->childrenCount] = subcontext;
-
-    context->childrenCount += 1;
 }
 
-int main(int argc, char *argv[]) {
-    return 0;
-}
