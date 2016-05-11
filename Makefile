@@ -1,21 +1,23 @@
 CC=clang
 
 C_SRC=$(wildcard Source/*.c)
-CFLAGS=-fblocks -ISource
+CFLAGS=-fblocks -IInclude
 
-SHAREDLIB=elara.so
+SHAREDLIB=libelara.so
 
-DEPS=Source/*.h
+DEPS=Include/*.h
 
 OBJ=$(C_SRC:.c=.o)
 
 %.o: %.c $(DEPS) 
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-elara: $(OBJ)
-	$(CC) -shared -o $(SHAREDLIB) $^ $(CFLAGS)
+Elara: $(OBJ)
+	mkdir -p Elara
+	$(CC) -shared -o Elara/$(SHAREDLIB) $^ $(CFLAGS)
+	cp Include/Elara.h Elara
 
 .PHONY: clean
 
 clean:
-	rm -rf Source/*.o
+	rm -rf Source/*.o *.so Elara/*

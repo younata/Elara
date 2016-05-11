@@ -49,3 +49,8 @@ void run(TestContext *context) {
     }
 }
 
+int elara_main(int argc, char *argv[]) {
+    printf("Elara not yet implemented\n");
+    return 1;
+}
+

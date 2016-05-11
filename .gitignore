@@ -1,3 +1,5 @@
 *swp
 *.o
 elara.so
+Elara/
+ElaraSpec

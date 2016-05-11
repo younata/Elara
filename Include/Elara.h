@@ -3,6 +3,7 @@
 
 typedef void (^ElaraTestBlock)(void);
 
+int elara_main(int argc, char *argv[]);
 void elara_tests(ElaraTestBlock tests);
 //void beforeEach(ElaraTestBlock);
 //void afterEach(ElaraTestBlock);

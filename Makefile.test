@@ -1,0 +1,18 @@
+CC=clang
+
+SRC=$(wildcard Spec/*.c)
+CFLAGS=-fblocks -IElara -IInclude
+LFLAGS=-lElara -LElara
+
+OBJ=$(SRC:.c=.o)
+
+%.o: %.c
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+ElaraSpec: $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS) $(LFLAGS)
+
+.PHONY: clean
+
+clean:
+	rm -rf Spec/*.o

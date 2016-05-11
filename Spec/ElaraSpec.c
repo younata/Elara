@@ -1,5 +1,6 @@
 #include "Elara.h"
 
+void ElaraSpec() {
 elara_tests(^{
     describe("a test", ^{
         it("runs", ^{
@@ -17,4 +18,4 @@ elara_tests(^{
         });
     });
 });
-
+}
