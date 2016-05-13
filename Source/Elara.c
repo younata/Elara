@@ -1,31 +1,38 @@
 #include <sys/queue.h>
 #include <stdio.h>
+#include <Block.h>
 
 #include "Elara.h"
 #include "TestContext.h"
 
-TestContext *baseContext = NULL;
+static TestContext *baseContext = NULL;
 TestContext *currentContext = NULL;
 
-void elara_tests(ElaraTestBlock tests) {
+void describe(const char *name, ElaraTestBlock block) {
     if (baseContext == NULL) {
         baseContext = testContext_create(NULL);
+        currentContext = baseContext;
     }
-    currentContext = baseContext;
-}
 
-void describe(const char *name, ElaraTestBlock block) {
     TestContext *context = testContext_create(currentContext);
     context->name = (char *)name;
-    context->block = block;
+    TestContext *oldContext = currentContext;
+    currentContext = context;
+    if (block) {
+        context->block = Block_copy(block);
+        context->block();
+    }
+    currentContext = oldContext;
 }
 
 void it(const char *name, ElaraTestBlock test) {
     TestContext *itContext = testContext_create(currentContext);
 
     itContext->name = (char *)name;
-    itContext->block = test;
     itContext->status = TestStatusNotRun;
+    if (test) {
+        itContext->block = Block_copy(test);
+    }
 }
 
 void expect(int condition) {
@@ -36,21 +43,41 @@ void expect(int condition) {
     }
 }
 
-void run(TestContext *context) {
+int run(TestContext *context) {
+    __block int returnValue = 0;
     TestContext *oldContext = currentContext;
-    if (context->block != NULL) {
-        currentContext = context;
-        context->block();
+    currentContext = context;
+    if (context->status == TestStatusNotATest) {
         elara_stack_foreach(context->children, ^(void *entry){
             TestContext *childContext = (TestContext *)entry;
-            run(childContext);
+            returnValue += run(childContext);
         });
-        currentContext = oldContext;
+    } else if (context->status == TestStatusNotRun) {
+        context->block();
+        returnValue = 1;
+        switch (context->status) {
+            case TestStatusFailed:
+                printf("F");
+                break;
+            case TestStatusErrored:
+                printf("X");
+                break;
+            case TestStatusSucceeded:
+                printf(".");
+                returnValue = 0;
+                break;
+            default:
+                break;
+        }
+        fflush(stdout);
     }
+    currentContext = oldContext;
+    return returnValue;
 }
 
 int elara_main(int argc, char *argv[]) {
-    printf("Elara not yet implemented\n");
-    return 1;
+    int result = run(currentContext);
+    printf("\n");
+    return result;
 }
 

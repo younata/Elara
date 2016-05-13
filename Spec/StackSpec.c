@@ -5,7 +5,6 @@
 #include "Stack.h"
 
 void StackSpec() {
-elara_tests(^{
     describe("An ElaraStack", ^{
         __block ElaraStack *subject;
 
@@ -82,5 +81,4 @@ elara_tests(^{
             });
         });
     });
-});
 }

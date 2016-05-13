@@ -5,7 +5,6 @@
 #include "TestContext.h"
 
 void TestContextSpec() {
-elara_tests(^{
     describe("A TestContext", ^{
         __block TestContext *subject;
 
@@ -29,5 +28,4 @@ elara_tests(^{
             testContext_dealloc(subject);
         });
     });
-});
 }

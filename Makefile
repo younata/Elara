@@ -1,7 +1,7 @@
 CC=clang
 
 C_SRC=$(wildcard Source/*.c)
-CFLAGS=-Wall -Werror -fblocks -fPIC -IInclude
+CFLAGS=-Wall -Werror -fblocks -fPIC -IInclude -g
 
 SHAREDLIB=libelara.so
 
@@ -22,6 +22,10 @@ Elara: $(OBJ)
 spec: Elara
 	make -f Makefile.test
 	./ElaraSpec
+
+debugspec: Elara
+	make -f Makefile.test
+	lldb ElaraSpec
 
 clean:
 	rm -rf Source/*.o *.so Elara/*

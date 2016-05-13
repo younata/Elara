@@ -1,7 +1,7 @@
 CC=clang
 
 SRC=$(wildcard Spec/*.c)
-CFLAGS=-fblocks -IElara -IInclude
+CFLAGS=-fblocks -IElara -IInclude -g
 LFLAGS=-lelara -LElara
 UNAME_S=$(shell uname -s)
 ifeq ($(UNAME_S),Linux)

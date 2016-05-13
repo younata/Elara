@@ -34,7 +34,10 @@ void *elara_stack_get(ElaraStack *stack, int index) {
     for (int i = 0; i < index; i++) {
         entry = SLIST_NEXT(entry, entries);
     }
-    return entry->data;
+    if (entry) {
+        return entry->data;
+    }
+    return entry;
 }
 
 void elara_stack_foreach(ElaraStack *stack, ElaraStackEntryBlock block) {

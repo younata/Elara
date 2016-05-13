@@ -1,7 +1,6 @@
 #include "Elara.h"
 
 void ElaraSpec() {
-elara_tests(^{
     describe("a test", ^{
         it("runs", ^{
             expect(1 == 1);
@@ -17,5 +16,4 @@ elara_tests(^{
             });
         });
     });
-});
 }
