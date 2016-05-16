@@ -5,8 +5,8 @@ typedef void (^ElaraTestBlock)(void);
 
 int elara_main(int argc, char *argv[]);
 
-//void beforeEach(ElaraTestBlock);
-//void afterEach(ElaraTestBlock);
+void beforeEach(ElaraTestBlock before);
+void afterEach(ElaraTestBlock after);
 void describe(const char *name, ElaraTestBlock context);
 void it(const char *name, ElaraTestBlock test);
 

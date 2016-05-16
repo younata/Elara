@@ -1,7 +1,7 @@
 #ifndef __TESTCONTEXT_H__
 #define __TESTCONTEXT_H__
 
-#include "Stack.h"
+#include "List.h"
 #include "Elara.h"
 
 typedef enum test_status_enum {
@@ -16,9 +16,9 @@ typedef struct {
     char *name;
     ElaraTestBlock block;
     TestStatus status;
-    ElaraStack *beforeEach;
-    ElaraStack *afterEach;
-    ElaraStack *children;
+    ElaraList *beforeEach;
+    ElaraList *afterEach;
+    ElaraList *children;
 } TestContext;
 
 TestContext *testContext_create(TestContext *parent_context);

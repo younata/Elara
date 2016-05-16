@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "Elara.h"
-#include "Stack.h"
+#include "List.h"
 #include "TestContext.h"
 
 void TestContextSpec() {
@@ -14,7 +14,7 @@ void TestContextSpec() {
             expect(subject->name == NULL);
             expect(subject->block == NULL);
             expect(subject->status == TestStatusNotATest);
-            expect(elara_stack_count(subject->children) == 0);
+            expect(elara_list_count(subject->children) == 0);
 
             testContext_dealloc(subject);
         });
@@ -23,7 +23,7 @@ void TestContextSpec() {
             subject = testContext_create(NULL);
 
             TestContext *other = testContext_create(subject);
-            expect(elara_stack_get(subject->children, 0) == other);
+            expect(elara_list_get(subject->children, 0) == other);
 
             testContext_dealloc(subject);
         });

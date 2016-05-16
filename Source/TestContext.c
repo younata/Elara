@@ -13,17 +13,17 @@ TestContext *testContext_create(TestContext *parent_context) {
     context->beforeEach = NULL;
     context->afterEach = NULL;
 
-    context->children = elara_stack_create();
+    context->children = elara_list_create();
 
     if (parent_context) {
-        elara_stack_insert(parent_context->children, context);
+        elara_list_insert(parent_context->children, context);
     }
 
     return context;
 }
 
 void testContext_dealloc(TestContext *context) {
-    elara_stack_dealloc(context->children, ^(void *entry) {
+    elara_list_dealloc(context->children, ^(void *entry) {
         TestContext *subcontext = (TestContext *)entry;
         testContext_dealloc(subcontext);
     });

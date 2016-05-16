@@ -25,6 +25,12 @@ void describe(const char *name, ElaraTestBlock block) {
     currentContext = oldContext;
 }
 
+void beforeEach(ElaraTestBlock before) {
+}
+
+void afterEach(ElaraTestBlock after) {
+}
+
 void it(const char *name, ElaraTestBlock test) {
     TestContext *itContext = testContext_create(currentContext);
 
@@ -48,7 +54,7 @@ int run(TestContext *context) {
     TestContext *oldContext = currentContext;
     currentContext = context;
     if (context->status == TestStatusNotATest) {
-        elara_stack_foreach(context->children, ^(void *entry){
+        elara_list_foreach(context->children, ^(void *entry){
             TestContext *childContext = (TestContext *)entry;
             returnValue += run(childContext);
         });

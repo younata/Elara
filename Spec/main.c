@@ -1,12 +1,14 @@
 #include "Elara.h"
 
 void ElaraSpec();
-void StackSpec();
+void ListSpec();
 void TestContextSpec();
+void BeforeEachSpec();
 
 int main(int argc, char *argv[]) {
     ElaraSpec();
-    StackSpec();
+    ListSpec();
     TestContextSpec();
+    //BeforeEachSpec();
     return elara_main(argc, argv);
 }
