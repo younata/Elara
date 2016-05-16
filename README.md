@@ -1,6 +1,6 @@
 ## Elara
 
-![CircleCi](https://circleci.com/gh/younata/Elara.png?style=shield)
+[![CircleCi](https://circleci.com/gh/younata/Elara.png?style=shield)](https://circleci.com/gh/younata/Elara)
 
 BDD-Style test suite for C.
 
