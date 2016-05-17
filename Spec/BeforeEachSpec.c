@@ -9,7 +9,13 @@ typedef struct {
 } BeforeEachCalls;
 
 void BeforeEachSpec() {
-    __block BeforeEachCalls beforeEachCalls;
+    __block BeforeEachCalls beforeEachCalls = {
+        .outerOne = 0,
+        .outerTwo = 0,
+        .innerOne = 0,
+        .innerTwo = 0,
+        .noExamples = 0
+    };
 
     describe("Before Eaches", ^{
         beforeEach(^{ beforeEachCalls.outerOne += 1; });

@@ -9,6 +9,6 @@ int main(int argc, char *argv[]) {
     ElaraSpec();
     ListSpec();
     TestContextSpec();
-    //BeforeEachSpec();
+    BeforeEachSpec();
     return elara_main(argc, argv);
 }

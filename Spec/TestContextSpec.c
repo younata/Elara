@@ -14,6 +14,7 @@ void TestContextSpec() {
             expect(subject->name == NULL);
             expect(subject->block == NULL);
             expect(subject->status == TestStatusNotATest);
+            expect(subject->children != NULL);
             expect(elara_list_count(subject->children) == 0);
 
             testContext_dealloc(subject);

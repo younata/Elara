@@ -26,6 +26,7 @@ void describe(const char *name, ElaraTestBlock block) {
 }
 
 void beforeEach(ElaraTestBlock before) {
+    elara_list_insert(currentContext->beforeEach, Block_copy(before));
 }
 
 void afterEach(ElaraTestBlock after) {
@@ -59,6 +60,7 @@ int run(TestContext *context) {
             returnValue += run(childContext);
         });
     } else if (context->status == TestStatusNotRun) {
+        testContext_run_beforeEachs(context);
         context->block();
         returnValue = 1;
         switch (context->status) {
