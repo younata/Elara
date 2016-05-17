@@ -30,6 +30,7 @@ void beforeEach(ElaraTestBlock before) {
 }
 
 void afterEach(ElaraTestBlock after) {
+    elara_list_insert(currentContext->afterEach, Block_copy(after));
 }
 
 void it(const char *name, ElaraTestBlock test) {
@@ -42,11 +43,13 @@ void it(const char *name, ElaraTestBlock test) {
     }
 }
 
-void expect(int condition) {
+void elara_expect(int condition, const char *expression, const char *file, int line_number) {
+    if (currentContext->status == TestStatusFailed) { return; }
     if (condition) {
         currentContext->status = TestStatusSucceeded;
     } else {
         currentContext->status = TestStatusFailed;
+        printf("\n%s (%s-%d) Failed.\nExpected '%s' to be truthy, got falsy\n", currentContext->name, file, line_number, expression);
     }
 }
 
@@ -62,6 +65,7 @@ int run(TestContext *context) {
     } else if (context->status == TestStatusNotRun) {
         testContext_run_beforeEachs(context);
         context->block();
+        testContext_run_afterEachs(context);
         returnValue = 1;
         switch (context->status) {
             case TestStatusFailed:

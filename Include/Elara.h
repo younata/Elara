@@ -10,6 +10,7 @@ void afterEach(ElaraTestBlock after);
 void describe(const char *name, ElaraTestBlock context);
 void it(const char *name, ElaraTestBlock test);
 
-void expect(int condition);
+void elara_expect(int condition, const char *expression, const char *file, int line_number);
+#define expect(expr)    elara_expect((expr), #expr, __FILE__, __LINE__)
 
 #endif /* __ELARA_H__ */
