@@ -15,7 +15,9 @@ struct Elara_List_Entry {
 typedef struct Elara_List_Entry ElaraListEntry;
 
 ElaraList *elara_list_create();
-void elara_list_insert(ElaraList *list, void *entry);
+void elara_list_append(ElaraList *list, void *entry);
+void elara_list_insert(ElaraList *list, void *entry, int position);
+void elara_list_insert_list(ElaraList *initial, ElaraList *other, int position);
 int elara_list_count(ElaraList *list);
 void *elara_list_pop(ElaraList *list);
 void *elara_list_get(ElaraList *list, int index);

@@ -1,14 +1,11 @@
 #include <stdlib.h>
 #include <Block.h>
 #include <string.h>
-#include <stdio.h>
 
 #include "TestContext.h"
 
-void testContext_run_list_of_blocks(TestContext *context, ElaraList *(^blockListGetter)(TestContext *ctx));
-
 TestContext *testContext_create(TestContext *parent_context) {
-    TestContext *context = malloc(sizeof(TestContext));
+    TestContext *context = calloc(1, sizeof(TestContext));
     context->name = NULL;
     context->block = NULL;
     context->status = TestStatusNotATest;
@@ -19,36 +16,42 @@ TestContext *testContext_create(TestContext *parent_context) {
     context->children = elara_list_create();
 
     if (parent_context) {
-        elara_list_insert(parent_context->children, context);
+        elara_list_append(parent_context->children, context);
     }
 
     return context;
 }
 
 void testContext_run_beforeEachs(TestContext *context) {
-    testContext_run_list_of_blocks(context, ^ElaraList *(TestContext *ctx) { return ctx->beforeEach; });
-}
-
-void testContext_run_afterEachs(TestContext *context) {
-    testContext_run_list_of_blocks(context, ^ElaraList *(TestContext *ctx) { return ctx->afterEach; });
-}
-
-void testContext_run_list_of_blocks(TestContext *context, ElaraList *(^blockListGetter)(TestContext *ctx)) {
     TestContext *ctx = context;
-    ElaraList *blocks = elara_list_create();
-    while (ctx->parent != NULL) {
-        elara_list_foreach(blockListGetter(ctx), ^(void *entry){
-            elara_list_insert(blocks, entry);
-        });
+    ElaraList *blocks_list = elara_list_create();
+    do {
+        elara_list_insert_list(blocks_list, ctx->beforeEach, 0);
         ctx = ctx->parent;
-    }
+    } while (ctx != NULL && ctx->parent != NULL);
 
-    elara_list_foreach(blocks, ^(void *entry){
+    elara_list_foreach(blocks_list, ^(void *entry) {
         ElaraTestBlock block = (ElaraTestBlock)entry;
         block();
     });
 
-    elara_list_dealloc(blocks, ^(void *blah){});
+    elara_list_dealloc(blocks_list, ^(void *entry){});
+}
+
+void testContext_run_afterEachs(TestContext *context) {
+    TestContext *ctx = context;
+    ElaraList *blocks_list = elara_list_create();
+    do {
+        elara_list_insert_list(blocks_list, ctx->afterEach, -1);
+        ctx = ctx->parent;
+    } while (ctx != NULL && ctx->parent != NULL);
+
+    elara_list_foreach(blocks_list, ^(void *entry) {
+        ElaraTestBlock block = (ElaraTestBlock)entry;
+        block();
+    });
+
+    elara_list_dealloc(blocks_list, ^(void *entry){});
 }
 
 void testContext_dealloc(TestContext *context) {

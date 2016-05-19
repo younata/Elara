@@ -26,11 +26,11 @@ void describe(const char *name, ElaraTestBlock block) {
 }
 
 void beforeEach(ElaraTestBlock before) {
-    elara_list_insert(currentContext->beforeEach, Block_copy(before));
+    elara_list_append(currentContext->beforeEach, Block_copy(before));
 }
 
 void afterEach(ElaraTestBlock after) {
-    elara_list_insert(currentContext->afterEach, Block_copy(after));
+    elara_list_append(currentContext->afterEach, Block_copy(after));
 }
 
 void it(const char *name, ElaraTestBlock test) {
