@@ -23,3 +23,4 @@ spec:
 
 clean:
 	rm -rf Spec/ElaraFocusedSpec/*.o
+	rm -f ElaraFocusedSpec

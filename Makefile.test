@@ -1,6 +1,6 @@
 CC=clang
 
-SRC=$(wildcard Spec/ElaraSpec*.c)
+SRC=$(wildcard Spec/ElaraSpec/*.c)
 CFLAGS=-fblocks -IElara -IInclude -g
 LFLAGS=-lelara -LElara
 UNAME_S=$(shell uname -s)
@@ -23,3 +23,4 @@ spec:
 
 clean:
 	rm -rf Spec/ElaraSpec/*.o
+	rm -f ElaraSpec
