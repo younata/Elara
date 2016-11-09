@@ -17,16 +17,31 @@ Elara: $(OBJ)
 	$(CC) -shared -o Elara/$(SHAREDLIB) $^ $(CFLAGS)
 	cp Include/Elara.h Elara
 
-.PHONY: clean spec
+.PHONY: clean spec elaraspec elaradebugspec focusedspec focuseddebugspec 
 
 spec: Elara
 	make -f Makefile.test
 	./ElaraSpec
+	make -f Makefile.focusedtest
+	./ElaraFocusedSpec
 
-debugspec: Elara
+elaraspec: Elara
+	make -f Makefile.test
+	./ElaraSpec
+
+elaradebugspec: Elara
 	make -f Makefile.test
 	lldb ElaraSpec
+
+focusedspec: Elara
+	make -f Makefile.focusedtest
+	./ElaraFocusedSpec
+
+focuseddebugspec: Elara
+	make -f Makefile.focusedtest
+	lldb ElaraFocusedSpec
 
 clean:
 	rm -rf Source/*.o *.so Elara/*
 	make -f Makefile.test clean
+	make -f Makefile.focusedtest clean

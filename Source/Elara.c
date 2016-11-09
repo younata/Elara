@@ -8,13 +8,15 @@
 static TestContext *baseContext = NULL;
 TestContext *currentContext = NULL;
 
-void describe(const char *name, ElaraTestBlock block) {
+// private
+
+void create_describe(const char *name, ElaraTestBlock block, TestFocus focus) {
     if (baseContext == NULL) {
-        baseContext = testContext_create(NULL);
+        baseContext = testContext_create(NULL, TestFocusUnfocused);
         currentContext = baseContext;
     }
 
-    TestContext *context = testContext_create(currentContext);
+    TestContext *context = testContext_create(currentContext, focus);
     context->name = (char *)name;
     TestContext *oldContext = currentContext;
     currentContext = context;
@@ -23,6 +25,26 @@ void describe(const char *name, ElaraTestBlock block) {
         context->block();
     }
     currentContext = oldContext;
+}
+
+void create_it(const char *name, ElaraTestBlock test, TestFocus focus) {
+    TestContext *itContext = testContext_create(currentContext, focus);
+
+    itContext->name = (char *)name;
+    itContext->status = TestStatusNotRun;
+    if (test) {
+        itContext->block = Block_copy(test);
+    }
+}
+
+// public
+
+void describe(const char *name, ElaraTestBlock block) {
+    create_describe(name, block, TestFocusUnfocused);
+}
+
+void fdescribe(const char *name, ElaraTestBlock block) {
+    create_describe(name, block, TestFocusFocused);
 }
 
 void beforeEach(ElaraTestBlock before) {
@@ -34,13 +56,11 @@ void afterEach(ElaraTestBlock after) {
 }
 
 void it(const char *name, ElaraTestBlock test) {
-    TestContext *itContext = testContext_create(currentContext);
+    create_it(name, test, TestFocusUnfocused);
+}
 
-    itContext->name = (char *)name;
-    itContext->status = TestStatusNotRun;
-    if (test) {
-        itContext->block = Block_copy(test);
-    }
+void fit(const char *name, ElaraTestBlock test) {
+    create_it(name, test, TestFocusFocused);
 }
 
 void elara_expect(int condition, const char *expression, const char *file, int line_number) {
@@ -53,16 +73,20 @@ void elara_expect(int condition, const char *expression, const char *file, int l
     }
 }
 
-int run(TestContext *context) {
+int run(TestContext *context, TestFocus focus) {
     __block int returnValue = 0;
     TestContext *oldContext = currentContext;
     currentContext = context;
     if (context->status == TestStatusNotATest) {
         elara_list_foreach(context->children, ^(void *entry){
             TestContext *childContext = (TestContext *)entry;
-            returnValue += run(childContext);
+            TestFocus currentFocus = focus;
+            if (focus == TestFocusFocused || childContext->has_focused_children) {
+                currentFocus = TestFocusFocused;
+            }
+            returnValue += run(childContext, currentFocus);
         });
-    } else if (context->status == TestStatusNotRun) {
+    } else if (context->status == TestStatusNotRun && focus == context->focus) {
         testContext_run_beforeEachs(context);
         context->block();
         testContext_run_afterEachs(context);
@@ -88,7 +112,7 @@ int run(TestContext *context) {
 }
 
 int elara_main(int argc, char *argv[]) {
-    int result = run(currentContext);
+    int result = run(currentContext, TestFocusUnfocused);
     printf("\n");
     return result;
 }
