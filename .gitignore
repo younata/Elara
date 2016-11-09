@@ -2,4 +2,4 @@
 *.o
 elara.so
 Elara/
-ElaraSpec
+/ElaraSpec
