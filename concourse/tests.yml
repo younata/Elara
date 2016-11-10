@@ -8,7 +8,7 @@ image_resource:
     tag: latest
 
 inputs:
-- name: elara
+- name: elara_github
 
 run:
-  path: elara/concourse/tests.sh
+  path: elara_github/concourse/tests.sh
