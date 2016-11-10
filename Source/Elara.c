@@ -4,6 +4,7 @@
 #include <string.h>
 #include <Block.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "Elara.h"
 #include "List.h"
@@ -100,9 +101,12 @@ int run(TestContext *context, TestFocus focus, ElaraList *results) {
             returnValue += run(childContext, currentFocus, results);
         });
     } else if (context->status == TestStatusNotRun && focus == context->focus) {
+        clock_t start = clock(), diff;
         testContext_run_beforeEachs(context);
         context->block();
         testContext_run_afterEachs(context);
+        diff = clock() - start;
+        double runtime = (double)diff / (double) CLOCKS_PER_SEC;
         returnValue = 1;
         switch (context->status) {
             case TestStatusFailed:
@@ -119,7 +123,7 @@ int run(TestContext *context, TestFocus focus, ElaraList *results) {
                 break;
         }
         fflush(stdout);
-        testReport_add_report(results, context->name, context->message, context->status, 0);
+        testReport_add_report(results, context->name, context->message, context->status, runtime);
     }
     currentContext = oldContext;
     return returnValue;
