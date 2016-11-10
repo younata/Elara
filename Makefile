@@ -26,11 +26,11 @@ spec: Elara
 	./ElaraFocusedSpec
 
 circlespec: Elara
-	mkdir $CIRCLE_TEST_REPORTS/elara
+	mkdir $(CIRCLE_TEST_REPORTS)/elara
 	make -f Makefile.test
-	./ElaraSpec -x $CIRCLE_TEST_REPORTS/elara/main.xml
+	./ElaraSpec -x $(CIRCLE_TEST_REPORTS)/elara/main.xml
 	make -f Makefile.focusedtest
-	./ElaraFocusedSpec -x $CIRCLE_TEST_REPORTS/elara/focused.xml
+	./ElaraFocusedSpec -x $(CIRCLE_TEST_REPORTS)/elara/focused.xml
 
 elaraspec: Elara
 	make -f Makefile.test
