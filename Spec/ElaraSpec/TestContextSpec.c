@@ -3,6 +3,7 @@
 #include "Elara.h"
 #include "List.h"
 #include "TestContext.h"
+#include "string.h"
 
 void TestContextSpec() {
     describe("A TestContext", ^{
@@ -27,6 +28,21 @@ void TestContextSpec() {
             expect(elara_list_get(subject->children, 0) == other);
 
             testContext_dealloc(subject);
+        });
+
+        it("correctly calculates it's full name", ^{
+            TestContext *parent = testContext_create(NULL, TestFocusUnfocused);
+
+            TestContext *child1 = testContext_create(parent, TestFocusUnfocused);
+            child1->name = "child1";
+            TestContext *child2 = testContext_create(child1, TestFocusUnfocused);
+            child2->name = "child2";
+            TestContext *child3 = testContext_create(child2, TestFocusUnfocused);
+            child3->name = "child3";
+
+            expect(strncmp(testContext_full_test_name(child1), "child1", 7) == 0);
+            expect(strncmp(testContext_full_test_name(child2), "child1 child2", 14) == 0);
+            expect(strncmp(testContext_full_test_name(child3), "child1 child2 child3", 21) == 0);
         });
     });
 }

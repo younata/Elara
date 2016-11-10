@@ -1,6 +1,7 @@
+#include <stdio.h>
 #include <stdlib.h>
-#include <Block.h>
 #include <string.h>
+#include <Block.h>
 
 #include "TestContext.h"
 
@@ -39,6 +40,41 @@ TestContext *testContext_create(TestContext *parent_context, TestFocus focus) {
     }
 
     return context;
+}
+
+// Not Safe
+void prepend(char *string, const char *to_prepend) {
+    size_t len = strlen(to_prepend);
+
+    memmove(string + len, string, strlen(string) + 1);
+
+    for (size_t i = 0; i < len; i++) {
+        string[i] = to_prepend[i];
+    }
+}
+
+char *testContext_full_test_name(TestContext *context) {
+    TestContext *current = context;
+    size_t required_length = 0;
+    while (1) {
+        required_length += strlen(current->name);
+        if (current->parent != NULL && current->parent->name != NULL) {
+            required_length += 1;
+            current = current->parent;
+        } else {
+            required_length += 1;
+            break;
+        }
+    }
+    current = context->parent;
+    char *name = calloc(1, required_length);
+    while (current != NULL && current->name != NULL) {
+        prepend(name, " ");
+        prepend(name, current->name);
+        current = current->parent;
+    }
+    strncat(name, context->name, required_length);
+    return name;
 }
 
 void testContext_run_beforeEachs(TestContext *context) {

@@ -36,6 +36,8 @@ typedef struct test_context_s {
 
 TestContext *testContext_create(TestContext *parent_context, TestFocus focus);
 
+char *testContext_full_test_name(TestContext *context);
+
 void testContext_run_beforeEachs(TestContext *context);
 void testContext_run_afterEachs(TestContext *context);
 

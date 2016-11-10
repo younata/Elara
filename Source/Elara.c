@@ -126,7 +126,7 @@ int run(TestContext *context, TestFocus focus, ElaraList *results) {
                 break;
         }
         fflush(stdout);
-        testReport_add_report(results, context->name, context->message, context->status, runtime);
+        testReport_add_report(results, testContext_full_test_name(context), context->message, context->status, runtime);
     }
     currentContext = oldContext;
     return returnValue;
