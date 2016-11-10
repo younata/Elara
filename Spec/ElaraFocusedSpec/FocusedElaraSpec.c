@@ -8,7 +8,7 @@ void ElaraSpec() {
     __block int focused_nested_tests_run_count = 0;
     __block int focused_describe_tests_run_count = 0;
 
-    describe("elara specs", ^{
+    describe("focused elara specs", ^{
         it("does not run", ^{
             unfocused_run_count = 1;
             expect(unfocused_run_count != 1);
@@ -41,6 +41,29 @@ void ElaraSpec() {
                 focused_describe_tests_run_count += 1;
                 expect(focused_describe_tests_run_count == 1);
             });
+        });
+    });
+}
+
+void OtherElaraBlock() {
+    __block int focused_describe_tests_run_count = 0;
+
+    fdescribe("top-level focused specs", ^{
+        describe("nested focused tests", ^{
+            describe("with an additional level of nesting", ^{
+                it("are also followed through with", ^{
+                    focused_describe_tests_run_count += 1;
+                    expect(focused_describe_tests_run_count == 1);
+                });
+            });
+        });
+    });
+
+    describe("other top level tests", ^{
+        it("does not run", ^{
+            int this = 1;
+            int to_not_run = 0;
+            expect(this == to_not_run);
         });
     });
 }

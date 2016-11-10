@@ -91,6 +91,9 @@ int run(TestContext *context, TestFocus focus, ElaraList *results) {
     __block int returnValue = 0;
     TestContext *oldContext = currentContext;
     currentContext = context;
+    if (context->has_focused_children) {
+        focus = TestFocusFocused;
+    }
     if (context->status == TestStatusNotATest) {
         elara_list_foreach(context->children, ^(void *entry){
             TestContext *childContext = (TestContext *)entry;
