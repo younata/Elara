@@ -26,7 +26,7 @@ void create_describe(const char *name, ElaraTestBlock block, TestFocus focus) {
     context->name = (char *)name;
     TestContext *oldContext = currentContext;
     currentContext = context;
-    if (block) {
+    if (block != NULL) {
         context->block = Block_copy(block);
         context->block();
     }
@@ -38,7 +38,7 @@ void create_it(const char *name, ElaraTestBlock test, TestFocus focus) {
 
     itContext->name = (char *)name;
     itContext->status = TestStatusNotRun;
-    if (test) {
+    if (test != NULL) {
         itContext->block = Block_copy(test);
     }
 }
@@ -51,6 +51,10 @@ void describe(const char *name, ElaraTestBlock block) {
 
 void fdescribe(const char *name, ElaraTestBlock block) {
     create_describe(name, block, TestFocusFocused);
+}
+
+void xdescribe(const char *name, ElaraTestBlock block) {
+    create_describe(name, block, TestFocusSkipped);
 }
 
 void beforeEach(ElaraTestBlock before) {
@@ -69,6 +73,10 @@ void fit(const char *name, ElaraTestBlock test) {
     create_it(name, test, TestFocusFocused);
 }
 
+void xit(const char *name, ElaraTestBlock test) {
+    create_it(name, test, TestFocusSkipped);
+}
+
 void elara_expect(int condition, const char *expression, const char *file, int line_number) {
     if (currentContext->status == TestStatusFailed) { return; }
     if (condition) {
@@ -83,7 +91,7 @@ void elara_expect(int condition, const char *expression, const char *file, int l
         currentContext->message = (char *)calloc(1, expected_length);
         snprintf(currentContext->message, expected_length, "Expected '%s' to be truthy, got falsy", expression);
 
-        printf("\n%s (%s:%d) Failed: Expected '%s' to be truthy, got falsy\n", currentContext->name, file, line_number, expression);
+        printf("\n%s (%s:%d) Failed: Expected '%s' to be truthy, got falsy\n", testContext_full_test_name(currentContext), file, line_number, expression);
     }
 }
 
@@ -103,7 +111,13 @@ int run(TestContext *context, TestFocus focus, ElaraList *results) {
             }
             returnValue += run(childContext, currentFocus, results);
         });
-    } else if (context->status == TestStatusNotRun && focus == context->focus) {
+    } else if (context->status == TestStatusNotRun) {
+        if (context->block == NULL || focus != context->focus) {
+            testReport_add_report(results, testContext_full_test_name(context), NULL, TestStatusSkipped, 0);
+            printf("*");
+            fflush(stdout);
+            return 0;
+        }
         clock_t start = clock(), diff;
         testContext_run_beforeEachs(context);
         context->block();

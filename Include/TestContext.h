@@ -7,6 +7,7 @@
 typedef enum test_focused_enum {
     TestFocusUnfocused,
     TestFocusFocused,
+    TestFocusSkipped,
 } TestFocus;
 
 typedef enum test_status_enum {
@@ -15,6 +16,7 @@ typedef enum test_status_enum {
     TestStatusFailed,
     TestStatusErrored,
     TestStatusSucceeded,
+    TestStatusSkipped,
 } TestStatus;
 
 typedef char elara_bool;

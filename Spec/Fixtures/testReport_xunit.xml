@@ -7,4 +7,7 @@
     <testcase name="test name 3" time="4.000000">
         <error message="unknown error" />
     </testcase>
+    <testcase name="skipped test" time="0.000000">
+        <skipped />
+    </testcase>
 </testsuite>

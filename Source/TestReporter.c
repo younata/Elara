@@ -12,8 +12,13 @@ void testReport_add_report(ElaraList *reports, char *test_name, char *message, T
     }
     TestReport *report = calloc(1, sizeof(TestReport));
     report->name = test_name;
-    if (result != TestStatusSucceeded) {
-        report->message = message;
+    switch (result) {
+        case TestStatusSucceeded:
+        case TestStatusSkipped:
+            break;
+        default:
+            report->message = message;
+            break;
     }
     report->result = result;
     report->runtime = test_runtime;
@@ -43,6 +48,8 @@ void testReport_create_report_xunit(ElaraList *reports, FILE *output) {
                 fprintf(output, "        <failure message=\"%s\" />\n", report->message);
             } else if (report->result == TestStatusErrored) {
                 fprintf(output, "        <error message=\"%s\" />\n", report->message);
+            } else if (report->result == TestStatusSkipped) {
+                fprintf(output, "        <skipped />\n");
             }
             fprintf(output, "    </testcase>\n");
         }

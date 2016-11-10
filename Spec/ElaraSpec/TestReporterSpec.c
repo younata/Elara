@@ -88,6 +88,7 @@ void TestReporterSpec() {
                 testReport_add_report(list, "test name", NULL, TestStatusSucceeded, 3.0);
                 testReport_add_report(list, "test name 2", "expected 2 to be 3", TestStatusFailed, 2.0);
                 testReport_add_report(list, "test name 3", "unknown error", TestStatusErrored, 4.0);
+                testReport_add_report(list, "skipped test", NULL, TestStatusSkipped, 0);
 
                 testReport_create_report(list, TestReportStyleXUnit, test_output);
 

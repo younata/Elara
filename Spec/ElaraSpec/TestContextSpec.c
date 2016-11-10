@@ -30,6 +30,36 @@ void TestContextSpec() {
             testContext_dealloc(subject);
         });
 
+        it("causes children to inherit parent's focusing", ^{
+            TestContext *parent = testContext_create(NULL, TestFocusFocused);
+
+            TestContext *child = testContext_create(parent, TestFocusUnfocused);
+
+            expect(child->focus == TestFocusFocused);
+
+            testContext_dealloc(parent);
+        });
+
+        it("causes children to inherit parent's skipped", ^{
+            TestContext *parent = testContext_create(NULL, TestFocusSkipped);
+
+            TestContext *child = testContext_create(parent, TestFocusUnfocused);
+
+            expect(child->focus == TestFocusSkipped);
+
+            testContext_dealloc(parent);
+        });
+
+        it("skipped children do not inherit parent's focus", ^{
+            TestContext *parent = testContext_create(NULL, TestFocusFocused);
+
+            TestContext *child = testContext_create(parent, TestFocusSkipped);
+
+            expect(child->focus == TestFocusSkipped);
+
+            testContext_dealloc(parent);
+        });
+
         it("correctly calculates it's full name", ^{
             TestContext *parent = testContext_create(NULL, TestFocusUnfocused);
 
@@ -43,6 +73,8 @@ void TestContextSpec() {
             expect(strncmp(testContext_full_test_name(child1), "child1", 7) == 0);
             expect(strncmp(testContext_full_test_name(child2), "child1 child2", 14) == 0);
             expect(strncmp(testContext_full_test_name(child3), "child1 child2 child3", 21) == 0);
+
+            testContext_dealloc(parent);
         });
     });
 }

@@ -5,7 +5,8 @@ dependencies:
   override:
     - sudo apt-get update
     - sudo apt-get install clang libblocksruntime-dev
+    - git clone https://github.com/sstephenson/bats && sudo bats/install.sh /usr/local
 
 test:
   override:
-    - make circlespec
+    - make circlespec integration

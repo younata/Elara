@@ -17,7 +17,7 @@ Elara: $(OBJ)
 	$(CC) -shared -o Elara/$(SHAREDLIB) $^ $(CFLAGS)
 	cp Include/Elara.h Elara
 
-.PHONY: clean spec circlespec elaraspec elaradebugspec focusedspec focuseddebugspec fly
+.PHONY: clean spec circlespec elaraspec elaradebugspec focusedspec focuseddebugspec fly integration
 
 spec: Elara
 	make -f Makefile.test
@@ -55,3 +55,6 @@ clean:
 
 fly: clean
 	fly -t ci execute --config ./concourse/tests.yml --input elara_github=.
+
+integration:
+	bats Spec/Integration/elara.bats

@@ -31,10 +31,12 @@ TestContext *testContext_create(TestContext *parent_context, TestFocus focus) {
     context->has_focused_children = focus == TestFocusFocused ? elara_true : elara_false;
 
     if (parent_context) {
-        if (parent_context->focus == TestFocusFocused) {
+        if (parent_context->focus == TestFocusFocused && focus != TestFocusSkipped) {
             context->focus = TestFocusFocused;
         } else if (parent_context->focus == TestFocusUnfocused && focus == TestFocusFocused) {
             testContext_set_parent_focused_children(context);
+        } else if (parent_context->focus == TestFocusSkipped) {
+            context->focus = TestFocusSkipped;
         }
         elara_list_append(parent_context->children, context);
     }
