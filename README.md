@@ -1,5 +1,6 @@
 ## Elara
 
+[![Concourse](http://ci.younata.com/api/v1/teams/robotics/pipelines/robotics/jobs/elara_tests/badge)](https://ci.younata.com/teams/robotics/pipelines/robotics)
 [![CircleCi](https://circleci.com/gh/younata/Elara.png?style=shield)](https://circleci.com/gh/younata/Elara)
 
 BDD-Style test suite for C.
