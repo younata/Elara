@@ -5,6 +5,7 @@ void ListSpec();
 void TestContextSpec();
 void BeforeEachSpec();
 void AfterEachSpec();
+void TestReporterSpec();
 
 int main(int argc, char *argv[]) {
     ElaraSpec();
@@ -12,6 +13,7 @@ int main(int argc, char *argv[]) {
     TestContextSpec();
     BeforeEachSpec();
     AfterEachSpec();
+    TestReporterSpec();
 
     return elara_main(argc, argv);
 }

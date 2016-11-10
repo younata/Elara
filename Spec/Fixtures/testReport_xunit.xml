@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite>
+    <testcase name="test name" time="3.000000" />
+    <testcase name="test name 2" time="2.000000">
+        <failure message="expected 2 to be 3" />
+    </testcase>
+    <testcase name="test name 3" time="4.000000">
+        <error message="unknown error" />
+    </testcase>
+</testsuite>

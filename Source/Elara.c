@@ -5,10 +5,10 @@
 #include "Elara.h"
 #include "TestContext.h"
 
+// private
+
 static TestContext *baseContext = NULL;
 TestContext *currentContext = NULL;
-
-// private
 
 void create_describe(const char *name, ElaraTestBlock block, TestFocus focus) {
     if (baseContext == NULL) {
@@ -116,4 +116,3 @@ int elara_main(int argc, char *argv[]) {
     printf("\n");
     return result;
 }
-
