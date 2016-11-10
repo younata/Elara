@@ -168,10 +168,10 @@ int elara_main(int argc, char *argv[]) {
     elara_list_dealloc(reports, ^(void *object) {
         free(object);
     });
-    if (xunit_output == NULL || xunit_output == stdout) {
+    if (xunit_output != NULL && xunit_output != stdout) {
         fclose(xunit_output);
     }
-    if (rspec_output == NULL || rspec_output == stdout) {
+    if (rspec_output != NULL && rspec_output != stdout) {
         fclose(rspec_output);
     }
     return result;
