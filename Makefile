@@ -17,13 +17,20 @@ Elara: $(OBJ)
 	$(CC) -shared -o Elara/$(SHAREDLIB) $^ $(CFLAGS)
 	cp Include/Elara.h Elara
 
-.PHONY: clean spec elaraspec elaradebugspec focusedspec focuseddebugspec fly
+.PHONY: clean spec circlespec elaraspec elaradebugspec focusedspec focuseddebugspec fly
 
 spec: Elara
 	make -f Makefile.test
 	./ElaraSpec
 	make -f Makefile.focusedtest
 	./ElaraFocusedSpec
+
+circlespec: Elara
+	mkdir $CIRCLE_TEST_REPORTS/elara
+	make -f Makefile.test
+	./ElaraSpec -x $CIRCLE_TEST_REPORTS/elara/main.xml
+	make -f Makefile.focusedtest
+	./ElaraFocusedSpec -x $CIRCLE_TEST_REPORTS/elara/focused.xml
 
 elaraspec: Elara
 	make -f Makefile.test

@@ -22,6 +22,7 @@ TestContext *testContext_create(TestContext *parent_context, TestFocus focus) {
     context->status = TestStatusNotATest;
     context->beforeEach = elara_list_create();
     context->afterEach = elara_list_create();
+    context->message = NULL;
 
     context->parent = parent_context;
     context->children = elara_list_create();

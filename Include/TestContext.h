@@ -28,6 +28,7 @@ typedef struct test_context_s {
     TestFocus focus;
     elara_bool has_focused_children;
     struct test_context_s *parent;
+    char *message;
     ElaraList *beforeEach; // List<ElaraTestBlock>
     ElaraList *afterEach;
     ElaraList *children; // List<TestContext *>

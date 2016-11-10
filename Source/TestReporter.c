@@ -4,6 +4,8 @@
 #include "TestReporter.h"
 #include "List.h"
 
+void testReport_create_report_xunit(ElaraList *reports, FILE *output);
+
 void testReport_add_report(ElaraList *reports, char *test_name, char *message, TestStatus result, double test_runtime) {
     if (result == TestStatusNotATest || result == TestStatusNotRun) {
         return;
@@ -20,6 +22,16 @@ void testReport_add_report(ElaraList *reports, char *test_name, char *message, T
 }
 
 void testReport_create_report(ElaraList *reports, TestReportStyle reportStyle, FILE *output) {
+    switch (reportStyle) {
+    case TestReportStyleXUnit:
+        testReport_create_report_xunit(reports, output);
+        break;
+    case TestReportStyleRSpec:
+        break;
+    }
+}
+
+void testReport_create_report_xunit(ElaraList *reports, FILE *output) {
     fprintf(output, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<testsuite>\n");
     elara_list_foreach(reports, ^(void *object) {
         TestReport *report = (TestReport *)object;
@@ -35,5 +47,5 @@ void testReport_create_report(ElaraList *reports, TestReportStyle reportStyle, F
             fprintf(output, "    </testcase>\n");
         }
     });
-    fprintf(output, "</testsuite>");
+    fprintf(output, "</testsuite>\n");
 }

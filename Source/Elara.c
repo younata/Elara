@@ -1,9 +1,14 @@
 #include <sys/queue.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <Block.h>
+#include <unistd.h>
 
 #include "Elara.h"
+#include "List.h"
 #include "TestContext.h"
+#include "TestReporter.h"
 
 // private
 
@@ -69,11 +74,19 @@ void elara_expect(int condition, const char *expression, const char *file, int l
         currentContext->status = TestStatusSucceeded;
     } else {
         currentContext->status = TestStatusFailed;
-        printf("\n%s (%s-%d) Failed.\nExpected '%s' to be truthy, got falsy\n", currentContext->name, file, line_number, expression);
+        size_t expected_length = strlen(expression) + 38;
+        if (currentContext->message != NULL) {
+            free(currentContext->message);
+            currentContext->message = NULL;
+        }
+        currentContext->message = (char *)calloc(1, expected_length);
+        snprintf(currentContext->message, expected_length, "Expected '%s' to be truthy, got falsy", expression);
+
+        printf("\n%s (%s:%d) Failed: Expected '%s' to be truthy, got falsy\n", currentContext->name, file, line_number, expression);
     }
 }
 
-int run(TestContext *context, TestFocus focus) {
+int run(TestContext *context, TestFocus focus, ElaraList *results) {
     __block int returnValue = 0;
     TestContext *oldContext = currentContext;
     currentContext = context;
@@ -84,7 +97,7 @@ int run(TestContext *context, TestFocus focus) {
             if (focus == TestFocusFocused || childContext->has_focused_children) {
                 currentFocus = TestFocusFocused;
             }
-            returnValue += run(childContext, currentFocus);
+            returnValue += run(childContext, currentFocus, results);
         });
     } else if (context->status == TestStatusNotRun && focus == context->focus) {
         testContext_run_beforeEachs(context);
@@ -106,13 +119,60 @@ int run(TestContext *context, TestFocus focus) {
                 break;
         }
         fflush(stdout);
+        testReport_add_report(results, context->name, context->message, context->status, 0);
     }
     currentContext = oldContext;
     return returnValue;
 }
 
 int elara_main(int argc, char *argv[]) {
-    int result = run(currentContext, TestFocusUnfocused);
+    FILE *xunit_output = NULL;
+    FILE *rspec_output = NULL;
+
+    int option = -1;
+
+    while ((option = getopt(argc, argv, "hr:x:")) != -1) {
+        switch (option) {
+        case 'h':
+            printf("Usage: %s [-r rspec_style_output_path] [-x xunit_style_output_path]\n", argv[0]);
+            return 0;
+        case 'r':
+            if (strncmp(optarg, "-", strlen(optarg)) == 0) {
+                rspec_output = stdout;
+            } else {
+                rspec_output = fopen(optarg, "a");
+            }
+            break;
+        case 'x':
+            if (strncmp(optarg, "-", strlen(optarg)) == 0) {
+                xunit_output = stdout;
+            } else {
+                xunit_output = fopen(optarg, "a");
+            }
+            break;
+        default:
+            break;
+        }
+    }
+
+    ElaraList *reports = elara_list_create();
+    int result = run(currentContext, TestFocusUnfocused, reports);
     printf("\n");
+    if (xunit_output != NULL) {
+        testReport_create_report(reports, TestReportStyleXUnit, xunit_output);
+    }
+    if (rspec_output != NULL) {
+        testReport_create_report(reports, TestReportStyleRSpec, rspec_output);
+    }
+
+    elara_list_dealloc(reports, ^(void *object) {
+        free(object);
+    });
+    if (xunit_output == NULL || xunit_output == stdout) {
+        fclose(xunit_output);
+    }
+    if (rspec_output == NULL || rspec_output == stdout) {
+        fclose(rspec_output);
+    }
     return result;
 }
