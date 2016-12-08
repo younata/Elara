@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 #include "Elara.h"
-#include "List.h"
+#include "ElaraList.h"
 #include "TestReporter.h"
 
 void TestReporterSpec() {

@@ -1,7 +1,7 @@
 #ifndef __TESTREPORTER_H__
 #define __TESTREPORTER_H__
 
-#include "List.h"
+#include "ElaraList.h"
 #include "TestContext.h"
 
 typedef struct test_report_s {

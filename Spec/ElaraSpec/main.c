@@ -1,7 +1,7 @@
 #include "Elara.h"
 
 void ElaraSpec();
-void ListSpec();
+void ElaraListSpec();
 void TestContextSpec();
 void BeforeEachSpec();
 void AfterEachSpec();
@@ -9,7 +9,7 @@ void TestReporterSpec();
 
 int main(int argc, char *argv[]) {
     ElaraSpec();
-    ListSpec();
+    ElaraListSpec();
     TestContextSpec();
     BeforeEachSpec();
     AfterEachSpec();

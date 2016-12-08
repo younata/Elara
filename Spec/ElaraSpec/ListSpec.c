@@ -2,9 +2,9 @@
 #include <sys/queue.h>
 
 #include "Elara.h"
-#include "List.h"
+#include "ElaraList.h"
 
-void ListSpec() {
+void ElaraListSpec() {
     describe("An ElaraList", ^{
         it("starts off with 0 objects", ^{
             ElaraList *subject = elara_list_create();

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "TestReporter.h"
-#include "List.h"
+#include "ElaraList.h"
 
 void testReport_create_report_xunit(ElaraList *reports, FILE *output);
 
