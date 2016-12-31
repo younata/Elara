@@ -2,7 +2,7 @@ CC=clang
 
 SRC=$(wildcard Spec/ElaraFocusedSpec/*.c)
 CFLAGS=-fblocks -IElara -IInclude -g
-LFLAGS=-lelara -LElara
+LFLAGS=-lelara -LElara -lm
 UNAME_S=$(shell uname -s)
 ifeq ($(UNAME_S),Linux)
 	LFLAGS += -lBlocksRuntime
