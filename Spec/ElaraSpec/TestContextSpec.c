@@ -12,11 +12,13 @@ void TestContextSpec() {
         it("starts off with 0 children and empty everything", ^{
             subject = testContext_create(NULL, TestFocusUnfocused);
 
-            expect(subject->name == NULL);
-            expect(subject->block == NULL);
-            expect(subject->status == TestStatusNotATest);
-            expect(subject->children != NULL);
-            expect(elara_list_count(subject->children) == 0);
+            expect(subject).toNot(be_null());
+            expect(subject->name).to(be_null());
+            expect(subject->block).to(be_null());
+            expect(&(subject->status)).to(equal(TestStatusNotATest));
+            expect(subject->children).toNot(be_null());
+            int children_count = elara_list_count(subject->children);
+            expect(&children_count).to(equal(0));
 
             testContext_dealloc(subject);
         });
@@ -25,7 +27,7 @@ void TestContextSpec() {
             subject = testContext_create(NULL, TestFocusUnfocused);
 
             TestContext *other = testContext_create(subject, TestFocusUnfocused);
-            expect(elara_list_get(subject->children, 0) == other);
+            expect(elara_list_get(subject->children, 0)).to(be_identical_to(other));
 
             testContext_dealloc(subject);
         });
@@ -35,7 +37,7 @@ void TestContextSpec() {
 
             TestContext *child = testContext_create(parent, TestFocusUnfocused);
 
-            expect(child->focus == TestFocusFocused);
+            expect(&(child->focus)).to(equal(TestFocusFocused));
 
             testContext_dealloc(parent);
         });
@@ -45,7 +47,7 @@ void TestContextSpec() {
 
             TestContext *child = testContext_create(parent, TestFocusUnfocused);
 
-            expect(child->focus == TestFocusSkipped);
+            expect(&(child->focus)).to(equal(TestFocusSkipped));
 
             testContext_dealloc(parent);
         });
@@ -55,7 +57,7 @@ void TestContextSpec() {
 
             TestContext *child = testContext_create(parent, TestFocusSkipped);
 
-            expect(child->focus == TestFocusSkipped);
+            expect(&(child->focus)).to(equal(TestFocusSkipped));
 
             testContext_dealloc(parent);
         });
@@ -70,9 +72,9 @@ void TestContextSpec() {
             TestContext *child3 = testContext_create(child2, TestFocusUnfocused);
             child3->name = "child3";
 
-            expect(strncmp(testContext_full_test_name(child1), "child1", 7) == 0);
-            expect(strncmp(testContext_full_test_name(child2), "child1 child2", 14) == 0);
-            expect(strncmp(testContext_full_test_name(child3), "child1 child2 child3", 21) == 0);
+            expect(testContext_full_test_name(child1)).to(equal_string("child1"));
+            expect(testContext_full_test_name(child2)).to(equal_string("child1 child2"));
+            expect(testContext_full_test_name(child3)).to(equal_string("child1 child2 child3"));
 
             testContext_dealloc(parent);
         });

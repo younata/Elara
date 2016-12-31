@@ -2,6 +2,7 @@
 #define __TESTCONTEXT_H__
 
 #include "ElaraList.h"
+#include "ElaraTypes.h"
 #include "Elara.h"
 
 typedef enum test_focused_enum {
@@ -18,10 +19,6 @@ typedef enum test_status_enum {
     TestStatusSucceeded,
     TestStatusSkipped,
 } TestStatus;
-
-typedef char elara_bool;
-#define elara_true 1
-#define elara_false 0
 
 typedef struct test_context_s {
     char *name;

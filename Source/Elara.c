@@ -43,6 +43,27 @@ void create_it(const char *name, ElaraTestBlock test, TestFocus focus) {
     }
 }
 
+void elara_assert(elara_bool passed, char *message, const char *file, int line_number) {
+    if (currentContext->status == TestStatusFailed) { return; }
+    if (passed) {
+        currentContext->status = TestStatusSucceeded;
+    } else {
+        currentContext->status = TestStatusFailed;
+        size_t message_length = strlen(message);
+        if (currentContext->message != NULL) {
+            free(currentContext->message);
+            currentContext->message = NULL;
+        }
+        currentContext->message = (char *)calloc(1, message_length);
+        strncpy(currentContext->message, message, message_length);
+
+        printf("\n%s (%s:%d) Failed: %s\n", testContext_full_test_name(currentContext), file, line_number, message);
+    }
+    if (message != NULL) {
+        free(message);
+    }
+}
+
 // public
 
 void describe(const char *name, ElaraTestBlock block) {
@@ -75,24 +96,6 @@ void fit(const char *name, ElaraTestBlock test) {
 
 void xit(const char *name, ElaraTestBlock test) {
     create_it(name, test, TestFocusSkipped);
-}
-
-void elara_expect(int condition, const char *expression, const char *file, int line_number) {
-    if (currentContext->status == TestStatusFailed) { return; }
-    if (condition) {
-        currentContext->status = TestStatusSucceeded;
-    } else {
-        currentContext->status = TestStatusFailed;
-        size_t expected_length = strlen(expression) + 38;
-        if (currentContext->message != NULL) {
-            free(currentContext->message);
-            currentContext->message = NULL;
-        }
-        currentContext->message = (char *)calloc(1, expected_length);
-        snprintf(currentContext->message, expected_length, "Expected '%s' to be truthy, got falsy", expression);
-
-        printf("\n%s (%s:%d) Failed: Expected '%s' to be truthy, got falsy\n", testContext_full_test_name(currentContext), file, line_number, expression);
-    }
 }
 
 int run(TestContext *context, TestFocus focus, ElaraList *results) {
@@ -149,6 +152,8 @@ int run(TestContext *context, TestFocus focus, ElaraList *results) {
 int elara_main(int argc, char *argv[]) {
     FILE *xunit_output = NULL;
     FILE *rspec_output = NULL;
+
+    ElaraEnvironmentAssert = elara_assert;
 
     int option = -1;
 

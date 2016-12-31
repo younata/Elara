@@ -9,13 +9,15 @@ DEPS=Include/*.h
 
 OBJ=$(C_SRC:.c=.o)
 
-%.o: %.c $(DEPS) 
+%.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 Elara: $(OBJ)
 	mkdir -p Elara
 	$(CC) -shared -o Elara/$(SHAREDLIB) $^ $(CFLAGS)
 	cp Include/Elara.h Elara
+	cp Include/ElaraTypes.h Elara
+	cp Include/Matchers.h Elara
 
 .PHONY: clean spec circlespec elaraspec elaradebugspec focusedspec focuseddebugspec fly integration
 

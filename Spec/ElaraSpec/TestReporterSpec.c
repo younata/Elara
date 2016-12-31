@@ -17,28 +17,29 @@ void TestReporterSpec() {
                 testReport_add_report(list, "test name 2", "failed", TestStatusFailed, 2.0);
                 testReport_add_report(list, "test name 3", "errored", TestStatusErrored, 4.0);
 
-                expect(elara_list_count(list) == 3);
+                int list_count = elara_list_count(list);
+                expect(&list_count).to(equal(3));
 
                 TestReport *report = elara_list_get(list, 0);
-                expect(report != NULL);
-                expect(strncmp(report->name, "test name", 10) == 0);
-                expect(report->message == NULL);
-                expect(report->result == TestStatusSucceeded);
-                expect(report->runtime == 3.0);
+                expect(report).toNot(be_null());
+                expect(report->name).to(equal_string("test name"));
+                expect(report->message).to(be_null());
+                expect(&(report->result)).to(equal(TestStatusSucceeded));
+                expect(&(report->runtime)).to(almost_equal(3.0, 6));
 
                 report = elara_list_get(list, 1);
-                expect(report != NULL);
-                expect(strncmp(report->name, "test name 2", 12) == 0);
-                expect(strncmp(report->message, "failed", 7) == 0);
-                expect(report->result == TestStatusFailed);
-                expect(report->runtime == 2.0);
+                expect(report).toNot(be_null());
+                expect(report->name).to(equal_string("test name 2"));
+                expect(report->message).to(equal_string("failed"));
+                expect(&(report->result)).to(equal(TestStatusFailed));
+                expect(&(report->runtime)).to(almost_equal(2.0, 6));
 
                 report = elara_list_get(list, 2);
-                expect(report != NULL);
-                expect(strncmp(report->name, "test name 3", 12) == 0);
-                expect(strncmp(report->message, "errored", 8) == 0);
-                expect(report->result == TestStatusErrored);
-                expect(report->runtime == 4.0);
+                expect(report).toNot(be_null());
+                expect(report->name).to(equal_string("test name 3"));
+                expect(report->message).to(equal_string("errored"));
+                expect(&(report->result)).to(equal(TestStatusErrored));
+                expect(&(report->runtime)).to(almost_equal(4.0, 6));
 
                 elara_list_dealloc(list, ^(void *entry) {
                     if (entry != NULL) {
@@ -52,7 +53,8 @@ void TestReporterSpec() {
 
                 testReport_add_report(list, "test name", NULL, TestStatusNotATest, 3.0);
 
-                expect(elara_list_count(list) == 0);
+                int list_count = elara_list_count(list);
+                expect(&list_count).to(equal(0));
 
                 elara_list_dealloc(list, ^(void *entry) {
                     if (entry != NULL) {
@@ -66,7 +68,8 @@ void TestReporterSpec() {
 
                 testReport_add_report(list, "test name", NULL, TestStatusNotRun, 3.0);
 
-                expect(elara_list_count(list) == 0);
+                int list_count = elara_list_count(list);
+                expect(&list_count).to(equal(0));
 
                 elara_list_dealloc(list, ^(void *entry) {
                     if (entry != NULL) {
@@ -79,7 +82,7 @@ void TestReporterSpec() {
         describe("testReport_create_report", ^{
             it("correctly outputs xunit style xml", ^{
                 FILE *test_output = fopen("test.out", "w+");
-                expect(test_output != NULL);
+                expect(test_output).toNot(be_null());
                 if (test_output == NULL) {
                     return;
                 }
@@ -100,7 +103,7 @@ void TestReporterSpec() {
                 fclose(test_output);
 
                 FILE *fixture = fopen("Spec/Fixtures/testReport_xunit.xml", "r");
-                expect(fixture != NULL);
+                expect(fixture).toNot(be_null());
                 if (fixture == NULL) {
                     free(received_output);
                     return;
@@ -113,8 +116,8 @@ void TestReporterSpec() {
                 fread(fixture_contents, 1, fixture_length, test_output);
                 fclose(fixture);
 
-                expect(received_length == fixture_length);
-                expect(strncmp(received_output, fixture_contents, fixture_length) == 0);
+                expect(&received_length).to(equal(fixture_length));
+                expect(received_output).to(equal_string(fixture_contents));
 
                 free(received_output);
                 free(fixture_contents);
