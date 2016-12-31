@@ -34,7 +34,6 @@ ElaraMatcherReturn be_identical_to(void *expected) {
 }
 
 ElaraMatcherReturn equal(int expected) {
-
     size_t (^decimal_places_in_int)(int) = ^size_t(int value) {
         if (value == 0) {
             return 1;
@@ -87,7 +86,7 @@ ElaraMatcherReturn equal_string(char *expected) {
 
         if (received_length != expected_length) { return elara_false; }
 
-        return strncmp(expected, received_as_string, received_length) == 0;
+        return strncmp(expected, received_as_string, expected_length) == 0;
     },
     ^char *(void *received, char *to) {
         char *received_as_string = (char *)received;

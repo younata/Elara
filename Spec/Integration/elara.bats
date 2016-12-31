@@ -10,8 +10,8 @@ setup() {
     [ "$output" = "..**.**.........................." ]
 }
 
-@test "ElaraFocusedSpec has 4 skipped specs, and 3 other tests" {
+@test "ElaraFocusedSpec has 3 skipped specs, and 4 other tests" {
     run ./ElaraFocusedSpec
     [ "$status" -eq 0 ]
-    [ "$output" = "*.**...*" ]
+    [ "$output" = "*.*...*" ]
 }

@@ -98,7 +98,7 @@ void TestReporterSpec() {
                 fseek(test_output, 0, SEEK_END);
                 long received_length = ftell(test_output);
                 fseek(test_output, 0, SEEK_SET);
-                char *received_output = (char *)calloc(received_length, 1);
+                char *received_output = (char *)calloc(received_length + 2, 1);
                 fread(received_output, 1, received_length, test_output);
                 fclose(test_output);
 
@@ -112,9 +112,10 @@ void TestReporterSpec() {
                 fseek(fixture, 0, SEEK_END);
                 long fixture_length = ftell(fixture);
                 fseek(fixture, 0, SEEK_SET);
-                char *fixture_contents = (char *)calloc(fixture_length, 1);
+                char *fixture_contents = (char *)calloc(fixture_length + 2, 1);
                 fread(fixture_contents, 1, fixture_length, test_output);
                 fclose(fixture);
+                expect(&fixture_length).to(equal(strlen(fixture_contents)));
 
                 expect(&received_length).to(equal(fixture_length));
                 expect(received_output).to(equal_string(fixture_contents));

@@ -5,6 +5,8 @@
 #include <Block.h>
 #include <unistd.h>
 #include <time.h>
+#include <signal.h>
+#include <execinfo.h>
 
 #include "Elara.h"
 #include "ElaraList.h"
@@ -149,12 +151,33 @@ int run(TestContext *context, TestFocus focus, ElaraList *results) {
     return returnValue;
 }
 
+void segfault_handler(int signal, siginfo_t *si, void *arg) {
+    void *callstack[128];
+
+    int frames = backtrace(callstack, 128);
+
+    fprintf(stderr, "Segfault caught at %p, exiting\n\n", si->si_addr);
+
+    backtrace_symbols_fd(callstack, frames, STDERR_FILENO);
+    exit(-1);
+}
+
 int elara_main(int argc, char *argv[]) {
     FILE *xunit_output = NULL;
     FILE *rspec_output = NULL;
 
     ElaraEnvironmentAssert = elara_assert;
 
+    // install a segfault handler
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(struct sigaction));
+    sigemptyset(&sa.sa_mask);
+    sa.sa_sigaction = segfault_handler;
+    sa.sa_flags   = SA_SIGINFO;
+
+    sigaction(SIGSEGV, &sa, NULL);
+
+    // handle command line options
     int option = -1;
 
     while ((option = getopt(argc, argv, "hr:x:")) != -1) {
