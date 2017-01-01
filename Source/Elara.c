@@ -166,7 +166,7 @@ int elara_main(int argc, char *argv[]) {
     FILE *xunit_output = NULL;
     FILE *rspec_output = NULL;
 
-    ElaraEnvironmentAssert = elara_assert;
+    setElaraEnvironmentAssert(elara_assert);
 
     // install a segfault handler
     struct sigaction sa;

@@ -6,6 +6,14 @@
 #include <assert.h>
 #include <Block.h>
 
+#pragma mark - Environment
+
+void (*ElaraEnvironmentAssert)(elara_bool, char *, const char *, int);
+
+void setElaraEnvironmentAssert(void (*elara_assert)(elara_bool, char *, const char *, int)) {
+    ElaraEnvironmentAssert = elara_assert;
+}
+
 #pragma mark - Matchers
 
 ElaraMatcherReturn matcher_create(ElaraMatcherEvaluator evaluator, ElaraMatcherFormatter formatter) {

@@ -32,6 +32,6 @@ ExpectType elara_expect(void *condition, const char *file, int line_number);
 
 // Global environment variable
 
-void (*ElaraEnvironmentAssert)(elara_bool, char *, const char *, int);
+void setElaraEnvironmentAssert(void (*elara_assert)(elara_bool, char *, const char *, int));
 
 #endif /* __MATCHERS_H__ */
