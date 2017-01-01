@@ -31,12 +31,26 @@ void matcher_dealloc(ElaraMatcherReturn matcher_return) {
 
 ElaraMatcherReturn be_identical_to(void *expected) {
     return matcher_create(^elara_bool(void *received) {
-        return expected == received;
+        if (received == NULL) {
+            return elara_false;
+        }
+        if (expected == received) {
+            return elara_true;
+        }
+        return elara_false;
     },
     ^char *(void *received, char *to) {
         size_t message_length = 70 + strlen(to);
         char *message = calloc(message_length, 1);
-        snprintf(message, message_length, "Expected %p %s be same address as %p", expected, to, received);
+        if (expected == NULL) {
+            strncpy(message, "Error: Received expectation for NULL, did you mean to use be_null?", message_length);
+        } else {
+            if (received == NULL) {
+                snprintf(message, message_length, "Expected NULL %s be same address as %p", to, expected);
+            } else {
+                snprintf(message, message_length, "Expected %p %s be same address as %p", received, to, expected);
+            }
+        }
         return message;
     });
 }
