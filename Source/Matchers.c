@@ -8,9 +8,9 @@
 
 #pragma mark - Environment
 
-void (*ElaraEnvironmentAssert)(elara_bool, char *, const char *, int);
+void (*ElaraEnvironmentAssert)(ElaraTestResult, char *, const char *, int);
 
-void setElaraEnvironmentAssert(void (*elara_assert)(elara_bool, char *, const char *, int)) {
+void setElaraEnvironmentAssert(void (*elara_assert)(ElaraTestResult, char *, const char *, int)) {
     ElaraEnvironmentAssert = elara_assert;
 }
 
@@ -30,14 +30,14 @@ void matcher_dealloc(ElaraMatcherReturn matcher_return) {
 }
 
 ElaraMatcherReturn be_identical_to(void *expected) {
-    return matcher_create(^elara_bool(void *received) {
-        if (received == NULL) {
-            return elara_false;
+    return matcher_create(^ElaraTestResult(void *received) {
+        if (expected == NULL) {
+            return ElaraTestResultError;
         }
         if (expected == received) {
-            return elara_true;
+            return ElaraTestResultPass;
         }
-        return elara_false;
+        return ElaraTestResultFail;
     },
     ^char *(void *received, char *to) {
         size_t message_length = 70 + strlen(to);
@@ -67,11 +67,19 @@ ElaraMatcherReturn equal(int expected) {
         return decimal_places;
     };
 
-    return matcher_create(^elara_bool(void *received) {
+    return matcher_create(^ElaraTestResult(void *received) {
+        if (received == NULL) {
+            return ElaraTestResultError;
+        }
         int value = *(int *)received;
         return value == expected;
     },
     ^char *(void *received, char *to) {
+        if (received == NULL) {
+            char *message = calloc(30, 1);
+            snprintf(message, 30, "Received NULL, expected int *");
+            return message;
+        }
         int value = *(int *)received;
 
         size_t expected_message_size = strlen(to) + decimal_places_in_int(value) +
@@ -84,16 +92,28 @@ ElaraMatcherReturn equal(int expected) {
 }
 
 ElaraMatcherReturn almost_equal(double expected, double decimal_places) {
-    return matcher_create(^elara_bool(void *received) {
+    return matcher_create(^ElaraTestResult(void *received) {
+        if (received == NULL) {
+            return ElaraTestResultError;
+        }
         double value = *(double *)received;
 
-        return fabs(value - expected) < pow(10, -decimal_places);
+        if (fabs(value - expected) < pow(10, -decimal_places)) {
+            return ElaraTestResultPass;
+        } else {
+            return ElaraTestResultFail;
+        }
     },
     ^char *(void *received, char *to) {
+        if (received == NULL) {
+            char *message = calloc(33, 1);
+            snprintf(message, 33, "Received NULL, expected double *");
+            return message;
+        }
         double value = *(double *)received;
 
         char *message = calloc(1024, 1);
-        snprintf(message, 1024, "Expected %f %s equal %f within %f decimal places", value, to, expected, decimal_places);
+        snprintf(message, 1024, "Expected %f %s equal %f (within %d decimal places)", value, to, expected, (int)decimal_places);
         return message;
     });
 }
@@ -101,7 +121,7 @@ ElaraMatcherReturn almost_equal(double expected, double decimal_places) {
 ElaraMatcherReturn equal_string(char *expected) {
     size_t expected_length = strlen(expected);
 
-    return matcher_create(^elara_bool(void *received) {
+    return matcher_create(^ElaraTestResult(void *received) {
         char *received_as_string = (char *)received;
 
         size_t received_length = strlen(received_as_string);
@@ -121,7 +141,7 @@ ElaraMatcherReturn equal_string(char *expected) {
 }
 
 ElaraMatcherReturn be_null() {
-    return matcher_create(^elara_bool(void *received) {
+    return matcher_create(^ElaraTestResult(void *received) {
         return received == NULL;
     },
     ^char *(void *received, char *to) {
@@ -133,7 +153,7 @@ ElaraMatcherReturn be_null() {
 }
 
 ElaraMatcherReturn be_truthy() {
-    return matcher_create(^elara_bool(void *received) {
+    return matcher_create(^ElaraTestResult(void *received) {
         return *(int *)received != 0;
     },
     ^char *(void *received, char *to) {

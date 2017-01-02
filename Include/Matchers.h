@@ -3,8 +3,14 @@
 
 #include "ElaraTypes.h"
 
+typedef enum {
+    ElaraTestResultFail = 0,
+    ElaraTestResultPass = 1,
+    ElaraTestResultError = 2
+} ElaraTestResult;
+
 typedef char *(^ElaraMatcherFormatter)(void *, char *);
-typedef elara_bool (^ElaraMatcherEvaluator)(void *);
+typedef ElaraTestResult (^ElaraMatcherEvaluator)(void *);
 
 typedef struct {
     ElaraMatcherEvaluator evaluator;
@@ -32,6 +38,6 @@ ExpectType elara_expect(void *condition, const char *file, int line_number);
 
 // Global environment variable
 
-void setElaraEnvironmentAssert(void (*elara_assert)(elara_bool, char *, const char *, int));
+void setElaraEnvironmentAssert(void (*elara_assert)(ElaraTestResult, char *, const char *, int));
 
 #endif /* __MATCHERS_H__ */

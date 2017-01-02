@@ -5,8 +5,14 @@
 #include <math.h>
 
 ElaraMatcherReturn have_list_size(int expected_list_size) {
-    return matcher_create(^elara_bool(void *received) {
-        return elara_list_count((ElaraList *)received) == expected_list_size;
+    return matcher_create(^ElaraTestResult(void *received) {
+        if (received == NULL) {
+            return ElaraTestResultError;
+        }
+        if (elara_list_count((ElaraList *)received) == expected_list_size) {
+            return ElaraTestResultPass;
+        }
+        return ElaraTestResultFail;
     },
     ^char *(void *received, char *to) {
         int received_list_count = elara_list_count((ElaraList *)received);

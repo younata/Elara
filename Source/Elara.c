@@ -45,11 +45,13 @@ void create_it(const char *name, ElaraTestBlock test, TestFocus focus) {
     }
 }
 
-void elara_assert(elara_bool passed, char *message, const char *file, int line_number) {
-    if (currentContext->status == TestStatusFailed) { return; }
-    if (passed) {
+void elara_assert(ElaraTestResult passed, char *message, const char *file, int line_number) {
+    if (currentContext->status == TestStatusFailed || currentContext->status == TestStatusErrored) { return; }
+    switch (passed) {
+    case ElaraTestResultPass:
         currentContext->status = TestStatusSucceeded;
-    } else {
+        break;
+    case ElaraTestResultFail: {
         currentContext->status = TestStatusFailed;
         size_t message_length = strlen(message);
         if (currentContext->message != NULL) {
@@ -60,6 +62,21 @@ void elara_assert(elara_bool passed, char *message, const char *file, int line_n
         strncpy(currentContext->message, message, message_length);
 
         printf("\n%s (%s:%d) Failed: %s\n", testContext_full_test_name(currentContext), file, line_number, message);
+        break;
+    }
+    case ElaraTestResultError: {
+        currentContext->status = TestStatusErrored;
+        size_t message_length = strlen(message);
+        if (currentContext->message != NULL) {
+            free(currentContext->message);
+            currentContext->message = NULL;
+        }
+        currentContext->message = (char *)calloc(1, message_length);
+        strncpy(currentContext->message, message, message_length);
+
+        printf("\n%s (%s:%d) Errored: %s\n", testContext_full_test_name(currentContext), file, line_number, message);
+        break;
+    }
     }
     if (message != NULL) {
         free(message);
