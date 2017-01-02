@@ -4,10 +4,10 @@ setup() {
     make spec
 }
 
-@test "ElaraSpec has 4 pended specs, and 35 other tests" {
+@test "ElaraSpec has 4 pended specs, and 57 other tests" {
     run ./ElaraSpec
     [ "$status" -eq 0 ]
-    [ "$output" = "..**.**................................" ]
+    [ "$output" = "..**.**......................................................" ]
 }
 
 @test "ElaraFocusedSpec has 3 skipped specs, and 4 other tests" {
