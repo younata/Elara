@@ -188,16 +188,164 @@ void MatcherSpec() {
             });
         });
 
-        xdescribe("equal_string", ^{
+        describe("equal_string", ^{
+            describe("evaluator", ^{
+                it("correctly errors when the value being tested is NULL", ^{
+                    matcher_return = equal_string("string");
 
+                    ElaraTestResult return_value = matcher_return.evaluator(NULL);
+
+                    expect(&return_value).to(equal(ElaraTestResultError));
+                });
+
+                it("can pass when the value being tested is an actual string", ^{
+                    matcher_return = equal_string("string");
+
+                    ElaraTestResult return_value = matcher_return.evaluator("string");
+
+                    expect(&return_value).to(equal(ElaraTestResultPass));
+
+                    return_value = matcher_return.evaluator("nope");
+
+                    expect(&return_value).to(equal(ElaraTestResultFail));
+                });
+
+                it("doesn't pass when substrings are passed in", ^{
+                    matcher_return = equal_string("string");
+
+                    ElaraTestResult return_value = matcher_return.evaluator("str");
+
+                    expect(&return_value).to(equal(ElaraTestResultFail));
+                });
+
+                it("doesn't pass when superstrings are passed in", ^{
+                    matcher_return = equal_string("string");
+
+                    ElaraTestResult return_value = matcher_return.evaluator("stringstring");
+
+                    expect(&return_value).to(equal(ElaraTestResultFail));
+                });
+            });
+
+            describe("failure_message_formatter", ^{
+                it("describes the issue when NULL is passed in as the tested value", ^{
+                    matcher_return = equal_string("string");
+
+                    char *return_value = matcher_return.failure_message_formatter(NULL, "to");
+
+                    expect(return_value).to(equal_string("Received NULL, expected char *"));
+
+                    free(return_value);
+                });
+
+                it("describes the issue for other values", ^{
+                    matcher_return = equal_string("expected");
+
+                    char *return_value = matcher_return.failure_message_formatter("tested", "to");
+
+                    expect(return_value).to(equal_string("Expected 'tested' to equal 'expected'"));
+
+                    free(return_value);
+                });
+            });
         });
 
-        xdescribe("be_null", ^{
+        describe("be_null", ^{
+            describe("evaluator", ^{
+                it("passes only when the value being tested is NULL", ^{
+                    matcher_return = be_null();
 
+                    ElaraTestResult return_value = matcher_return.evaluator("stringstring");
+
+                    expect(&return_value).to(equal(ElaraTestResultFail));
+
+                    return_value = matcher_return.evaluator(NULL);
+
+                    expect(&return_value).to(equal(ElaraTestResultPass));
+                });
+            });
+
+            describe("failure_message_formatter", ^{
+                it("says that it expected something to be null", ^{
+                    matcher_return = be_null();
+
+                    char *foo = "foo";
+                    char *return_value = matcher_return.failure_message_formatter(foo, "to");
+
+                    char *expected_message = calloc(1024, 1);
+                    snprintf(expected_message, 1024, "Expected %p to be null", foo);
+                    expect(return_value).to(equal_string(expected_message));
+
+                    free(return_value);
+                    free(expected_message);
+                });
+
+                it("still handles the case when tested value is null", ^{
+                    matcher_return = be_null();
+
+                    char *return_value = matcher_return.failure_message_formatter(NULL, "to");
+
+                    expect(return_value).to(equal_string("Expected NULL to be null"));
+
+                    free(return_value);
+                });
+            });
         });
 
-        xdescribe("be_truthy", ^{
-            
+        describe("be_truthy", ^{
+            describe("evaluator", ^{
+                it("correctly errors when NULL is passed in", ^{
+                    matcher_return = be_truthy();
+
+                    ElaraTestResult result = matcher_return.evaluator(NULL);
+
+                    expect(&result).to(equal(ElaraTestResultError));
+                });
+
+                it("passes when a pointer to a non-zero value is passed in", ^{
+                    matcher_return = be_truthy();
+
+                    double value = 0.1;
+                    ElaraTestResult result = matcher_return.evaluator(&value);
+
+                    expect(&result).to(equal(ElaraTestResultPass));
+                });
+
+                it("fails when a pointer to a zero is passed in", ^{
+                    matcher_return = be_truthy();
+
+                    double value = 0;
+                    ElaraTestResult result = matcher_return.evaluator(&value);
+
+                    expect(&result).to(equal(ElaraTestResultFail));
+                });
+            });
+
+            describe("failure_message_formatter", ^{
+                it("describes the issue when NULL is passed in as the tested value", ^{
+                    matcher_return = be_truthy();
+
+                    char *return_value = matcher_return.failure_message_formatter(NULL, "to");
+
+                    expect(return_value).to(equal_string("Expected NULL to be truthy"));
+
+                    free(return_value);
+                });
+
+                it("describes the issue for other values", ^{
+                    matcher_return = be_truthy();
+
+                    double value = 0;
+                    char *return_value = matcher_return.failure_message_formatter(&value, "to");
+
+                    char *message = calloc(1024, 1);
+                    snprintf(message, 1024, "Expected %p to be truthy", &value);
+                    expect(return_value).to(equal_string(message));
+
+                    free(return_value);
+                    free(message);
+                });
+            });
         });
     });
 }

@@ -122,15 +122,26 @@ ElaraMatcherReturn equal_string(char *expected) {
     size_t expected_length = strlen(expected);
 
     return matcher_create(^ElaraTestResult(void *received) {
+        if (received == NULL) {
+            return ElaraTestResultError;
+        }
         char *received_as_string = (char *)received;
 
         size_t received_length = strlen(received_as_string);
 
         if (received_length != expected_length) { return elara_false; }
 
-        return strncmp(expected, received_as_string, expected_length) == 0;
+        if (strncmp(expected, received_as_string, expected_length) == 0) {
+            return ElaraTestResultPass;
+        }
+        return ElaraTestResultFail;
     },
     ^char *(void *received, char *to) {
+        if (received == NULL) {
+            char *message = calloc(31, 1);
+            snprintf(message, 31, "Received NULL, expected char *");
+            return message;
+        }
         char *received_as_string = (char *)received;
 
         size_t message_length = 28 + strlen(to) + strlen(expected) + strlen(received_as_string);
@@ -142,24 +153,41 @@ ElaraMatcherReturn equal_string(char *expected) {
 
 ElaraMatcherReturn be_null() {
     return matcher_create(^ElaraTestResult(void *received) {
-        return received == NULL;
+        if (received == NULL) {
+            return ElaraTestResultPass;
+        }
+        return ElaraTestResultFail;
     },
     ^char *(void *received, char *to) {
         size_t message_length = 40 + strlen(to);
         char *message = calloc(message_length, 1);
-        snprintf(message, message_length, "Expected %p %s be null", received, to);
+        if (received == NULL) {
+            snprintf(message, message_length, "Expected NULL to be null");
+        } else {
+            snprintf(message, message_length, "Expected %p %s be null", received, to);
+        }
         return message;
     });
 }
 
 ElaraMatcherReturn be_truthy() {
     return matcher_create(^ElaraTestResult(void *received) {
-        return *(int *)received != 0;
+        if (received == NULL) {
+            return ElaraTestResultError;
+        }
+        if (*(int *)received != 0) {
+            return ElaraTestResultPass;
+        }
+        return ElaraTestResultFail;
     },
     ^char *(void *received, char *to) {
         size_t message_length = 40 + strlen(to);
         char *message = calloc(message_length, 1);
-        snprintf(message, message_length, "Expected %p %s be truthy", received, to);
+        if (received == NULL) {
+            snprintf(message, message_length, "Expected NULL %s be truthy", to);
+        } else {
+            snprintf(message, message_length, "Expected %p %s be truthy", received, to);
+        }
         return message;
     });
 }
