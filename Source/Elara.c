@@ -225,6 +225,8 @@ int elara_main(int argc, char *argv[]) {
     int result = 0;
     if (currentContext != NULL) {
         result = run(currentContext, TestFocusUnfocused, reports);
+    } else {
+        printf("Elara: No Tests Found");
     }
     printf("\n");
     if (xunit_output != NULL) {
