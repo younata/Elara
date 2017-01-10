@@ -21,11 +21,7 @@ Elara: $(OBJ)
 
 .PHONY: clean spec circlespec elaraspec elaradebugspec focusedspec focuseddebugspec fly integration
 
-spec: Elara
-	make -f Makefile.test
-	./ElaraSpec
-	make -f Makefile.focusedtest
-	./ElaraFocusedSpec
+spec: clean Elara elaraspec focusedspec emptyspec
 
 circlespec: Elara
 	mkdir $(CIRCLE_TEST_REPORTS)/elara
@@ -33,6 +29,9 @@ circlespec: Elara
 	./ElaraSpec -x $(CIRCLE_TEST_REPORTS)/elara/main.xml
 	make -f Makefile.focusedtest
 	./ElaraFocusedSpec -x $(CIRCLE_TEST_REPORTS)/elara/focused.xml
+	make -f Makefile.emptytest
+	./ElaraEmptySpec -x $(CIRCLE_TEST_REPORTS)/elara/empty.xml
+	make integration
 
 elaraspec: Elara
 	make -f Makefile.test
@@ -49,6 +48,14 @@ focusedspec: Elara
 focuseddebugspec: Elara
 	make -f Makefile.focusedtest
 	lldb ElaraFocusedSpec
+
+emptyspec: Elara
+	make -f Makefile.emptytest
+	./ElaraEmptySpec
+
+emptydebugspec: Elara
+	make -f Makefile.emptytest
+	lldb ElaraEmptySpec
 
 clean:
 	rm -rf Source/*.o *.so Elara/*

@@ -1,0 +1,26 @@
+CC=clang
+
+SRC=$(wildcard Spec/ElaraEmptySpec/*.c)
+CFLAGS=-fblocks -IElara -IInclude -g
+LFLAGS=-lelara -LElara -lm
+UNAME_S=$(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	LFLAGS += -lBlocksRuntime
+endif
+
+OBJ=$(SRC:.c=.o)
+
+%.o: %.c
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+ElaraEmptySpec: $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS) $(LFLAGS)
+
+.PHONY: clean spec
+
+spec:
+	./ElaraEmptySpec
+
+clean:
+	rm -rf Spec/ElaraEmptySpec/*.o
+	rm -f ElaraEmptySpec

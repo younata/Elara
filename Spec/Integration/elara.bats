@@ -15,3 +15,9 @@ setup() {
     [ "$status" -eq 0 ]
     [ "$output" = "*.*...*" ]
 }
+
+@test "ElaraEmptySpec has 0 tests" {
+    run ./ElaraEmptySpec
+    [ "$status" -eq 0 ]
+    [ "$output" = "" ]
+}

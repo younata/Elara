@@ -222,7 +222,10 @@ int elara_main(int argc, char *argv[]) {
     }
 
     ElaraList *reports = elara_list_create();
-    int result = run(currentContext, TestFocusUnfocused, reports);
+    int result = 0;
+    if (currentContext != NULL) {
+        result = run(currentContext, TestFocusUnfocused, reports);
+    }
     printf("\n");
     if (xunit_output != NULL) {
         testReport_create_report(reports, TestReportStyleXUnit, xunit_output);
