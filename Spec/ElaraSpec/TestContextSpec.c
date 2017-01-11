@@ -12,11 +12,11 @@ void TestContextSpec() {
         it("starts off with 0 children and empty everything", ^{
             subject = testContext_create(NULL, TestFocusUnfocused);
 
-            expect(subject).toNot(be_null());
+            expect(subject).to_not(be_null());
             expect(subject->name).to(be_null());
             expect(subject->block).to(be_null());
             expect(&(subject->status)).to(equal(TestStatusNotATest));
-            expect(subject->children).toNot(be_null());
+            expect(subject->children).to_not(be_null());
             int children_count = elara_list_count(subject->children);
             expect(&children_count).to(equal(0));
 

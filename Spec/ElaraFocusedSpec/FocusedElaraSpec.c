@@ -11,7 +11,7 @@ void ElaraSpec() {
     describe("focused elara specs", ^{
         it("does not run", ^{
             unfocused_run_count = 1;
-            expect(&unfocused_run_count).toNot(equal(1));
+            expect(&unfocused_run_count).to_not(equal(1));
         });
 
         fit("only runs focused specs", ^{
@@ -22,7 +22,7 @@ void ElaraSpec() {
         describe("nested focused tests", ^{
             it("are also followed through with (but not this one)", ^{
                 unfocused_nested_tests_run_count = 1;
-                expect(&unfocused_nested_tests_run_count).toNot(equal(1));
+                expect(&unfocused_nested_tests_run_count).to_not(equal(1));
             });
 
             fit("are also followed through with", ^{

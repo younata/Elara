@@ -21,7 +21,7 @@ typedef void (^ElaraExpectDSLBlock)(ElaraMatcherReturn);
 
 typedef struct {
     ElaraExpectDSLBlock to;
-    ElaraExpectDSLBlock toNot; // inverts the matcher
+    ElaraExpectDSLBlock to_not; // inverts the matcher
 } ExpectType;
 
 ElaraMatcherReturn matcher_create(ElaraMatcherEvaluator evaluator, ElaraMatcherFormatter formatter);

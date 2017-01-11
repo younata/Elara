@@ -21,21 +21,21 @@ void TestReporterSpec() {
                 expect(&list_count).to(equal(3));
 
                 TestReport *report = elara_list_get(list, 0);
-                expect(report).toNot(be_null());
+                expect(report).to_not(be_null());
                 expect(report->name).to(equal_string("test name"));
                 expect(report->message).to(be_null());
                 expect(&(report->result)).to(equal(TestStatusSucceeded));
                 expect(&(report->runtime)).to(almost_equal(3.0, 6));
 
                 report = elara_list_get(list, 1);
-                expect(report).toNot(be_null());
+                expect(report).to_not(be_null());
                 expect(report->name).to(equal_string("test name 2"));
                 expect(report->message).to(equal_string("failed"));
                 expect(&(report->result)).to(equal(TestStatusFailed));
                 expect(&(report->runtime)).to(almost_equal(2.0, 6));
 
                 report = elara_list_get(list, 2);
-                expect(report).toNot(be_null());
+                expect(report).to_not(be_null());
                 expect(report->name).to(equal_string("test name 3"));
                 expect(report->message).to(equal_string("errored"));
                 expect(&(report->result)).to(equal(TestStatusErrored));
@@ -82,7 +82,7 @@ void TestReporterSpec() {
         describe("testReport_create_report", ^{
             it("correctly outputs xunit style xml", ^{
                 FILE *test_output = fopen("test.out", "w+");
-                expect(test_output).toNot(be_null());
+                expect(test_output).to_not(be_null());
                 if (test_output == NULL) {
                     return;
                 }
@@ -103,7 +103,7 @@ void TestReporterSpec() {
                 fclose(test_output);
 
                 FILE *fixture = fopen("Spec/Fixtures/testReport_xunit.xml", "r");
-                expect(fixture).toNot(be_null());
+                expect(fixture).to_not(be_null());
                 if (fixture == NULL) {
                     free(received_output);
                     return;

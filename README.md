@@ -25,7 +25,7 @@ void MySpec() {
 
         describe("can also nest describes", ^{
             it("will run the nested it blocks", ^{
-                expect(NULL).toNot(be_null()); // False
+                expect(NULL).to_not(be_null()); // False
                 // Nesting it blocks is not tested.
                 // Most likely, nothing will happen, but no guarantees.
             });

@@ -207,10 +207,10 @@ ExpectType elara_expect(void *received, const char *file, int line_number) {
             ElaraEnvironmentAssert(elara_false, message, file, line_number);
         }
         matcher_dealloc(matcherValue);
-        Block_release(value.toNot);
+        Block_release(value.to_not);
         Block_release(value.to);
     });
-    value.toNot = Block_copy(^(ElaraMatcherReturn matcherValue) {
+    value.to_not = Block_copy(^(ElaraMatcherReturn matcherValue) {
         assert(matcherValue.evaluator != NULL);
         elara_bool passed = matcherValue.evaluator(received);
         if (!passed) {
@@ -221,7 +221,7 @@ ExpectType elara_expect(void *received, const char *file, int line_number) {
         }
         matcher_dealloc(matcherValue);
         Block_release(value.to);
-        Block_release(value.toNot);
+        Block_release(value.to_not);
     });
     return value;
 }
