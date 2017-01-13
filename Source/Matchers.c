@@ -72,7 +72,10 @@ ElaraMatcherReturn equal(int expected) {
             return ElaraTestResultError;
         }
         int value = *(int *)received;
-        return value == expected;
+        if (value == expected) {
+            return ElaraTestResultPass;
+        }
+        return ElaraTestResultFail;
     },
     ^char *(void *received, char *to) {
         if (received == NULL) {
@@ -162,7 +165,7 @@ ElaraMatcherReturn be_null() {
         size_t message_length = 40 + strlen(to);
         char *message = calloc(message_length, 1);
         if (received == NULL) {
-            snprintf(message, message_length, "Expected NULL to be null");
+            snprintf(message, message_length, "Expected NULL %s be null", to);
         } else {
             snprintf(message, message_length, "Expected %p %s be null", received, to);
         }
@@ -199,12 +202,12 @@ ExpectType elara_expect(void *received, const char *file, int line_number) {
 
     value.to = Block_copy(^(ElaraMatcherReturn matcherValue) {
         assert(matcherValue.evaluator != NULL);
-        elara_bool passed = matcherValue.evaluator(received);
-        if (passed) {
-            ElaraEnvironmentAssert(elara_true, NULL, file, line_number);
+        ElaraTestResult passed = matcherValue.evaluator(received);
+        if (passed == ElaraTestResultPass) {
+            ElaraEnvironmentAssert(passed, NULL, file, line_number);
         } else {
             char *message = matcherValue.failure_message_formatter(received, "to");
-            ElaraEnvironmentAssert(elara_false, message, file, line_number);
+            ElaraEnvironmentAssert(passed, message, file, line_number);
         }
         matcher_dealloc(matcherValue);
         Block_release(value.to_not);
@@ -212,12 +215,15 @@ ExpectType elara_expect(void *received, const char *file, int line_number) {
     });
     value.to_not = Block_copy(^(ElaraMatcherReturn matcherValue) {
         assert(matcherValue.evaluator != NULL);
-        elara_bool passed = matcherValue.evaluator(received);
-        if (!passed) {
-            ElaraEnvironmentAssert(elara_true, NULL, file, line_number);
+        ElaraTestResult passed = matcherValue.evaluator(received);
+        if (passed == ElaraTestResultFail) {
+            ElaraEnvironmentAssert(ElaraTestResultPass, NULL, file, line_number);
         } else {
+            if (passed == ElaraTestResultPass) {
+                passed = ElaraTestResultFail;
+            }
             char *message = matcherValue.failure_message_formatter(received, "to not");
-            ElaraEnvironmentAssert(elara_false, message, file, line_number);
+            ElaraEnvironmentAssert(passed, message, file, line_number);
         }
         matcher_dealloc(matcherValue);
         Block_release(value.to);

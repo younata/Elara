@@ -114,6 +114,19 @@ void MatcherSpec() {
                     return_value = matcher_return.evaluator(&failing_value);
                     expect(&return_value).to(equal(ElaraTestResultFail));
                 });
+
+                it("fails when the value being tested is not equal to the expected value", ^{
+                    matcher_return = equal(2);
+
+                    int failing_value = 1;
+                    int passing_value = 2;
+                    ElaraTestResult return_value = matcher_return.evaluator(&passing_value);
+
+                    expect(&return_value).to(equal(ElaraTestResultPass));
+
+                    return_value = matcher_return.evaluator(&failing_value);
+                    expect(&return_value).to(equal(ElaraTestResultFail));
+                });
             });
 
             describe("failure_message_formatter", ^{
